@@ -1,8 +1,8 @@
-# StateFlow
+# ColdFlow
 # Recyclerview
 # Retrofit
 
-Simple example of using stateFlow.
+Simple example of using ColdFlow.
 
 ![Capture1](https://user-images.githubusercontent.com/92223568/182913228-90c7e4d9-b601-4075-8ac6-dabcd33117f7.PNG)
 ![Capture2](https://user-images.githubusercontent.com/92223568/182913245-f0631cce-ac8d-4200-a3ff-621010f95881.PNG)
