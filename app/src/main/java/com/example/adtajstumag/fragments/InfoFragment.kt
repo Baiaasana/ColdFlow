@@ -1,6 +1,7 @@
 package com.example.adtajstumag.fragments
 
 import android.os.Bundle
+import android.util.Log.d
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.adtajstumag.LatestInfoUiState
 import com.example.adtajstumag.adapters.ItemAdapter
 import com.example.adtajstumag.databinding.FragmentInfoBinding
 import kotlinx.coroutines.launch
@@ -33,8 +35,7 @@ class InfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.getInfo2()
+        viewModel.collect()
         listeners()
         observes()
         init()
@@ -47,8 +48,19 @@ class InfoFragment : Fragment() {
 
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.infoState.collect {
-                    binding!!.swipeRefresh.isRefreshing = it.isLoading
-                    viewModel.collect(itemAdapter, binding!!.swipeRefresh)
+                    when(it){
+                        is LatestInfoUiState.Success -> {
+                            itemAdapter.submitList(it.info)
+                            d("resourceType", "success ${it.info?.size}")
+                        }
+                        is LatestInfoUiState.Error -> {
+                            d("resourceType", "error ${it.error}")
+                        }
+                        is LatestInfoUiState.Loader -> {
+                            binding!!.swipeRefresh.isRefreshing = it.isLoading
+                            d("resourceType", "loader ${it.isLoading}")
+                        }
+                    }
                 }
             }
         }
@@ -58,8 +70,7 @@ class InfoFragment : Fragment() {
         binding!!.swipeRefresh.setOnRefreshListener {
 
             viewModel.run {
-                getInfo2()
-                collect(itemAdapter, binding!!.swipeRefresh)
+                collect()
             }
         }
         itemAdapter.itemClick = {
